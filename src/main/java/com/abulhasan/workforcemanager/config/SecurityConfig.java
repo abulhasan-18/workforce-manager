@@ -18,7 +18,8 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(); // BCrypt hash
     }
 
-    @Bean
+    @SuppressWarnings("deprecation")
+@Bean
     public DaoAuthenticationProvider authenticationProvider(
             EmployeeUserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder

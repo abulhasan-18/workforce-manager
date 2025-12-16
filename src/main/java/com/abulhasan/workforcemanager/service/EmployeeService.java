@@ -26,11 +26,13 @@ public class EmployeeService {
         );
     }
 
+    @SuppressWarnings("null")
     public Employee get(Long id) {
         return repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found: " + id));
     }
 
+    @SuppressWarnings("null")
     public Employee create(Employee employee) {
         return repo.save(employee);
     }
@@ -55,6 +57,7 @@ public class EmployeeService {
         return repo.save(existing);
     }
 
+    @SuppressWarnings("null")
     public void delete(Long id) {
         repo.deleteById(id);
     }
