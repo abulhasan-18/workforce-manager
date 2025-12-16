@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title th:text="'Employee #' + ${employee.id} + ' • Workforce Manager'"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="app">
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo">WM</div>
+            <div>
+                <div class="title">Workforce Manager</div>
+                <div class="subtitle">Employee Details</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a class="btn ghost" th:href="@{/employees}">← Back</a>
+
+            <!-- Only ADMIN + HR -->
+            <a class="btn" th:href="@{/employees/{id}/edit(id=${employee.id})}"
+               sec:authorize="hasAnyRole('ADMIN','HR')">
+                Edit
+            </a>
+
+            <!-- Only ADMIN -->
+            <form th:action="@{/employees/{id}/delete(id=${employee.id})}"
+                  method="post"
+                  sec:authorize="hasRole('ADMIN')">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button class="btn danger" type="submit" onclick="return confirm('Delete this employee?');">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <h2 th:text="${employee.fullName}"></h2>
+            <p class="muted" th:text="${employee.email}"></p>
+
+            <div class="details">
+                <div><span class="k">Phone</span><span class="v" th:text="${employee.phone}"></span></div>
+                <div><span class="k">Department</span><span class="v" th:text="${employee.department}"></span></div>
+                <div><span class="k">Designation</span><span class="v" th:text="${employee.designation}"></span></div>
+                <div><span class="k">Salary</span><span class="v" th:text="${employee.salary}"></span></div>
+                <div><span class="k">Status</span><span class="v" th:text="${employee.status}"></span></div>
+                <div><span class="k">Role</span><span class="v" th:text="${employee.role}"></span></div>
+                <div><span class="k">Created</span><span class="v" th:text="${employee.createdAt}"></span></div>
+                <div><span class="k">Updated</span><span class="v" th:text="${employee.updatedAt}"></span></div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

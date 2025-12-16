@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Workforce Manager • Login</title>
+
+    <style>
+        :root{
+            --bg:#0b1020;
+            --card:rgba(255,255,255,0.06);
+            --card2:rgba(255,255,255,0.09);
+            --text:rgba(255,255,255,0.92);
+            --muted:rgba(255,255,255,0.7);
+            --border:rgba(255,255,255,0.12);
+            --shadow:0 20px 60px rgba(0,0,0,0.45);
+            --radius:20px;
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0; min-height:100vh;
+            font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+            color:var(--text);
+            background:
+                    radial-gradient(900px 500px at 20% 20%, rgba(120,80,255,0.35), transparent 60%),
+                    radial-gradient(900px 500px at 80% 25%, rgba(0,210,255,0.25), transparent 60%),
+                    radial-gradient(900px 600px at 50% 90%, rgba(0,255,170,0.12), transparent 55%),
+                    var(--bg);
+            display:grid; place-items:center;
+            padding:24px;
+        }
+        .wrap{
+            width:100%; max-width:980px;
+            display:grid; grid-template-columns:1.2fr 1fr;
+            gap:18px; align-items:stretch;
+        }
+        .panel{
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            background:var(--card);
+            box-shadow:var(--shadow);
+            overflow:hidden;
+            position:relative;
+        }
+        .panel::before{
+            content:"";
+            position:absolute; inset:-2px;
+            background:linear-gradient(135deg,
+            rgba(120,80,255,0.45),
+            rgba(0,210,255,0.25),
+            rgba(0,255,170,0.12));
+            filter:blur(18px);
+            opacity:0.35;
+            z-index:0;
+        }
+
+        .left{
+            padding:28px;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            min-height:520px;
+        }
+        .left > * { position:relative; z-index:1; }
+
+        .brand{ display:flex; align-items:center; gap:12px; }
+        .logo{
+            width:42px; height:42px;
+            border-radius:14px;
+            background:linear-gradient(135deg, rgba(120,80,255,0.9), rgba(0,210,255,0.6));
+            display:grid; place-items:center;
+            box-shadow:0 10px 30px rgba(0,0,0,0.35);
+            font-weight:800;
+        }
+        .brand h1{ margin:0; font-size:18px; font-weight:750; }
+        .brand p{ margin:2px 0 0; color:var(--muted); font-size:13px; }
+
+        .hero h2{
+            margin:22px 0 8px;
+            font-size:34px;
+            line-height:1.1;
+            letter-spacing:-0.6px;
+        }
+        .hero p{
+            margin:0;
+            color:var(--muted);
+            max-width:46ch;
+            font-size:14px;
+            line-height:1.6;
+        }
+        .stats{
+            margin-top:18px;
+            display:grid;
+            grid-template-columns:repeat(3, 1fr);
+            gap:12px;
+        }
+        .stat{
+            border:1px solid var(--border);
+            background:rgba(255,255,255,0.05);
+            border-radius:16px;
+            padding:12px;
+        }
+        .stat .k{ font-size:12px; color:var(--muted); }
+        .stat .v{ margin-top:6px; font-size:16px; font-weight:750; }
+
+        .right{
+            padding:28px;
+            background:linear-gradient(180deg, var(--card2), rgba(255,255,255,0.04));
+        }
+        /* IMPORTANT: keeps content above the glow overlay */
+        .right > * { position:relative; z-index:1; }
+
+        .cardTitle{ margin:0 0 6px; font-size:20px; font-weight:750; }
+        .cardSub{ margin:0 0 18px; color:var(--muted); font-size:13px; line-height:1.6; }
+
+        .alert{
+            border:1px solid rgba(255,80,110,0.35);
+            background:rgba(255,80,110,0.10);
+            padding:10px 12px;
+            border-radius:14px;
+            margin-bottom:12px;
+            font-size:13px;
+        }
+        .success{
+            border:1px solid rgba(0,255,170,0.25);
+            background:rgba(0,255,170,0.10);
+            padding:10px 12px;
+            border-radius:14px;
+            margin-bottom:12px;
+            font-size:13px;
+        }
+
+        form{ display:grid; gap:12px; margin-top:6px; }
+        label{ font-size:12px; color:var(--muted); display:block; margin-bottom:6px; }
+        input{
+            width:100%;
+            padding:12px 12px;
+            border-radius:14px;
+            border:1px solid var(--border);
+            background:rgba(0,0,0,0.18);
+            color:var(--text);
+            outline:none;
+            transition:0.2s ease;
+        }
+        input:focus{
+            border-color:rgba(120,80,255,0.65);
+            box-shadow:0 0 0 4px rgba(120,80,255,0.16);
+        }
+        .btn{
+            margin-top:4px;
+            width:100%;
+            padding:12px 14px;
+            border:0;
+            border-radius:14px;
+            cursor:pointer;
+            font-weight:750;
+            color:rgba(255,255,255,0.95);
+            background:linear-gradient(135deg, rgba(120,80,255,0.95), rgba(0,210,255,0.75));
+            box-shadow:0 14px 40px rgba(0,0,0,0.35);
+            transition:transform .12s ease, filter .12s ease;
+        }
+        .btn:hover{ transform:translateY(-1px); filter:brightness(1.05); }
+        .btn:active{ transform:translateY(0px); }
+
+        .hint{ margin-top:12px; font-size:12px; color:var(--muted); line-height:1.6; }
+        .footer{ margin-top:18px; font-size:12px; color:rgba(255,255,255,0.55); text-align:center; }
+
+        @media (max-width:900px){
+            .wrap{ grid-template-columns:1fr; }
+            .left{ min-height:auto; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="wrap">
+    <section class="panel left">
+        <div class="brand">
+            <div class="logo">WM</div>
+            <div>
+                <h1>Workforce Manager</h1>
+                <p>Employee Management Portal</p>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h2>Securely manage your team.</h2>
+            <p>
+                Login to manage employee records with role-based access.
+                Built with Spring Boot + Spring Security + MySQL.
+            </p>
+
+            <div class="stats">
+                <div class="stat"><div class="k">Access</div><div class="v">Role-based</div></div>
+                <div class="stat"><div class="k">Storage</div><div class="v">MySQL</div></div>
+                <div class="stat"><div class="k">Security</div><div class="v">BCrypt</div></div>
+            </div>
+        </div>
+
+        <div class="footer">© Workforce Manager • Internal Tool</div>
+    </section>
+
+    <section class="panel right">
+        <h3 class="cardTitle">Welcome back</h3>
+        <p class="cardSub">Sign in using your company email and password.</p>
+
+        <div class="alert" th:if="${param.error}">
+            Invalid email or password. Try again.
+        </div>
+
+        <div class="success" th:if="${param.logout}">
+            You’ve been logged out successfully.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <!-- CSRF token (needed because CSRF is enabled) -->
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <div>
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@company.com" required />
+            </div>
+
+            <div>
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" placeholder="••••••••" required />
+            </div>
+
+            <button class="btn" type="submit">Login</button>
+        </form>
+
+        <p class="hint">
+            Accounts come from the <b>employees</b> table. Passwords must be stored as a <b>BCrypt hash</b>.
+        </p>
+    </section>
+</div>
+</body>
+</html>
