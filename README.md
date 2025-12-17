@@ -1,53 +1,61 @@
 # 🧑‍💼 Employee Management Portal  
-**Spring Boot + Spring Security + MySQL + HTML (Server-Rendered UI)**
+**Spring Boot + Spring Security + MySQL + Server-Rendered HTML (Thymeleaf-friendly)**
 
-A secure **Employee Management CRUD** web application built with **Spring Boot**, **Spring MVC**, **Spring Security**, and **MySQL**, using a clean **server-rendered HTML UI** (Thymeleaf-friendly).  
-Built like a real internal admin tool: **login, roles, protected actions, and employee lifecycle management**.
+A secure **Employee Management CRUD** web app built with **Spring Boot**, **Spring MVC**, **Spring Security**, and **MySQL**, using a clean **server-rendered UI** (Thymeleaf-friendly).  
+Think “internal admin tool vibes”: **login, roles, protected actions, and employee lifecycle management**.
 
 ---
 
 ## ✨ Highlights
-- ✅ Clean layered architecture (Controller → Service → Repository)
-- 🔐 Spring Security login + role-based access control
+- ✅ Clean layered architecture (**Controller → Service → Repository**)
+- 🔐 Spring Security (**form login + logout**) + role-based access control
 - 🗄 MySQL + JPA/Hibernate persistence
-- 🧾 Server-side validation + neat UI workflow
+- 🧾 Server-side validation + clean UI workflow
+- 🔒 Password hashing with **BCrypt**
 
 ---
 
 ## 🚀 Features
 
-### ✅ Core
+### ✅ Core CRUD
 - Create, View, Update, Delete employees
-- Employee list page (search/filter optional)
+- Employee list page
 - Employee details page
-- Input validation with meaningful error messages
+- Server-side validation with clear error messages  
+  (Bean Validation: `@NotBlank`, `@Email`, `@Size`, etc.)
 
 ### 🔐 Security
-- Form login + logout
-- Password hashing with **BCrypt**
-- Role-based access control (`ADMIN`, `HR`, `USER`)
-- Protected routes (edit/delete restricted by role)
+- Form-based login + logout
+- BCrypt password hashing
+- Roles: `ADMIN`, `HR`, `USER`
+- Protected routes:
+  - View: allowed for authenticated users
+  - Create/Edit: restricted by role
+  - Delete: restricted by role
 
 ### 🗄 Database
-- MySQL integration using Spring Data JPA / Hibernate
-- JPA-based schema generation (`ddl-auto=update`) or manual schema support
+- MySQL integration via Spring Data JPA / Hibernate
+- Supports:
+  - Auto schema update (`ddl-auto=update`) for dev
+  - Manual schema for production (recommended)
 
 ---
 
-## 🧱 Architecture
+## 🧱 Layered Architecture
+```mermaid
+flowchart TB
+  U["Browser / UI<br/>HTML (Thymeleaf)"] -->|HTTP Request| F["Spring Security<br/>SecurityFilterChain"]
 
-This project follows a **Layered (N-Tier) Architecture**:
+  F -->|Authenticated & Authorized| D["DispatcherServlet<br/>Spring MVC Front Controller"]
+  D --> C["Controller Layer<br/>Spring MVC"]
+  C -->|calls| S["Service Layer<br/>Business Logic"]
+  S -->|calls| R["Repository Layer<br/>Spring Data JPA"]
+  R -->|SQL via JPA/Hibernate| DB[(MySQL Database)]
 
-### 🔁 Request Flow
-```text
-Browser (HTML UI)
-   ↓ HTTP Request
-Controller Layer (Spring MVC)
-   ↓ calls
-Service Layer (Business Logic)
-   ↓ calls
-Repository Layer (Spring Data JPA)
-   ↓ queries
-MySQL Database
-   ↑ returns
-Repository → Service → Controller → HTML View Response
+  DB -->|Result| R
+  R -->|returns| S
+  S -->|returns| C
+  C --> V["View Layer<br/>Thymeleaf + ViewResolver"]
+  V -->|HTML Response| U
+
+
